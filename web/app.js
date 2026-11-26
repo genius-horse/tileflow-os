@@ -20,9 +20,6 @@ const integerFormat = new Intl.NumberFormat('zh-CN');
 const clockFormat = new Intl.DateTimeFormat('zh-CN', {
   hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3, hourCycle: 'h23',
 });
-const dateTimeFormat = new Intl.DateTimeFormat('zh-CN', {
-  month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
-});
 
 let state = null;
 let selectedJob = null;
@@ -31,6 +28,8 @@ let pendingJob = null;
 let mode = 'tiles';
 let selectedFile = null;
 let stopPid = null;
+let watchedStop = null;
+let demoInFlight = null;
 let generation = 0;
 let pollTimer = null;
 let syncError = false;
@@ -166,6 +165,7 @@ function endSession(expired) {
   selectedJob = null;
   selectedTile = null;
   pendingJob = null;
+  watchedStop = null;
   paintedJob = null;
   canvasSignature = null;
   nextTileRetry = Infinity;
@@ -217,7 +217,6 @@ function renderWorkspace() {
   write('account-role', admin ? '管理员' : '普通用户');
   write('account-avatar', state.user.username.slice(0, 1).toUpperCase());
   show('system', admin);
-  show('admin-nav', admin);
   const jobs = [...(state.jobs || [])].sort((a, b) => b.submitted - a.submitted || Number(b.id) - Number(a.id));
   if (pendingJob) {
     const pending = pendingJob.id !== undefined
@@ -229,6 +228,21 @@ function renderWorkspace() {
       selectedTile = null;
     }
   }
+  if (watchedStop) {
+    const exit = [...history.values()].find((event) => event.type === 'worker_exit' &&
+      Number(event.pid) === watchedStop.pid && Number(event.seq) > watchedStop.after);
+    if (exit && jobs.some((job) => job.id === exit.job)) {
+      selectedJob = exit.job;
+      selectedTile = exit.tile;
+      watchedStop = null;
+      setMode('tiles');
+      if (matchMedia('(max-width: 760px)').matches) {
+        requestAnimationFrame(() => byId('retry-summary').closest('section').scrollIntoView({ block: 'nearest' }));
+      }
+    } else if (exit || Date.now() > watchedStop.until) {
+      watchedStop = null;
+    }
+  }
   if (!jobForSelection()) {
     selectedJob = jobs[0]?.id ?? null;
     selectedTile = null;
@@ -236,26 +250,27 @@ function renderWorkspace() {
   const job = jobForSelection();
   if (!tileForSelection(job)) selectedTile = job?.tiles?.[0]?.id ?? null;
   renderJobList(jobs, admin);
-  renderJob(job, admin);
+  renderJob(job);
   renderTimeline(job);
+  refreshDemoButtons();
   if (admin) renderSystem();
   renderEvents();
 }
 
 function renderJobList(jobs, admin) {
-  syncMarkup('job-list', [admin, jobs.map(({ id, name, owner, done, total, status }) => [id, name, owner, done, total, status])], () => {
+  syncMarkup('job-list', [admin, jobs.map(({ id, name, owner, priority, status }) => [id, name, owner, priority, status])], () => {
     const list = byId('job-list');
     const rows = jobs.map((job) => {
       const item = button('job-list-button', undefined, () => selectJob(job.id));
       item.dataset.job = job.id;
+      item.dataset.priority = job.priority;
+      item.title = `#${job.id} · ${job.name}${admin ? ` · ${job.owner}` : ''}`;
       const dot = node('i');
       dot.dataset.status = job.status;
       dot.setAttribute('aria-hidden', 'true');
       const meta = node('span');
-      const name = node('strong', '', job.name);
-      name.title = job.name;
-      const owner = admin ? ` · ${job.owner}` : '';
-      meta.append(name, node('small', '', `#${job.id} · ${job.done}/${job.total}${owner}`));
+      const sample = ['湖山样例.jpg', '高优样例.jpg'].includes(job.name);
+      meta.append(node('strong', '', `#${job.id} ${sample ? (job.priority === 'high' ? '高优样例' : '普通样例') : job.name}`));
       item.append(dot, meta);
       return item;
     });
@@ -266,22 +281,21 @@ function renderJobList(jobs, admin) {
   }
 }
 
-function renderJob(job, admin) {
+function renderJob(job) {
   show('empty-view', !job);
   show('job-view', Boolean(job));
-  if (!job) return;
+  if (!job) {
+    renderSelectedTile(null);
+    return;
+  }
   const id = encodeURIComponent(job.id);
   const download = byId('download-result');
   const complete = job.status === 'done';
   write('job-name', job.name);
   byId('job-name').title = job.name;
-  write('job-id', `#${job.id}`);
   write('job-operation', operationLabels[job.op] || job.op);
   write('job-priority', job.priority === 'high' ? '高' : '普通');
-  write('job-submitted', prettyTime(job.submitted, dateTimeFormat));
   write('job-progress-label', `${job.done} / ${job.total}`);
-  write('job-owner', job.owner);
-  show('job-owner-row', admin);
   setStatus('job-status', job.status);
   showError('job-error', job.error);
   const progress = byId('job-progress');
@@ -313,7 +327,7 @@ function renderJob(job, admin) {
   }
   syncMarkup('tile-picker', [id, job.tiles?.map((tile) => tile.id)], () => {
     const options = (job.tiles || []).map((tile) => {
-      const option = node('option', '', `#${tile.id}  (${tile.x}, ${tile.y})`);
+      const option = node('option', '', `#${tile.id}`);
       option.value = tile.id;
       return option;
     });
@@ -328,17 +342,34 @@ function renderSelectedTile(job) {
   const attempts = tile?.attempts || [];
   if (tile) byId('tile-select').value = tile.id;
   setStatus('tile-status', tile?.status, { ...statusLabels, done: '已提交' });
-  write('tile-location', tile ? `${tile.x}, ${tile.y}  ·  ${tile.w} × ${tile.h} px` : '');
+  write('tile-location', tile ? `${tile.w} × ${tile.h} px` : '');
+  byId('tile-select').disabled = !tile;
   show('attempt-empty', attempts.length === 0);
+  const latest = attempts.at(-1);
+  const lastFailure = attempts.slice(0, -1).reverse().find((attempt) => attempt.status === 'failed');
+  let summary = '';
+  if (lastFailure && latest) {
+    summary = latest.status === 'done' ? `重试成功 · PID ${latest.pid}`
+      : latest.status === 'running' ? `重试中 · PID ${latest.pid}` : '重试失败';
+  } else if (tile?.status === 'queued' && latest?.status === 'failed') {
+    summary = '已重新入队，等待接手';
+  }
+  const retry = byId('retry-summary');
+  retry.textContent = summary;
+  retry.hidden = !summary;
+  retry.dataset.status = tile?.status || '';
   syncMarkup('attempts', [job?.id, tile?.id, attempts], () => {
     const rows = attempts.map((entry) => {
       const row = node('div', 'attempt');
       const top = node('div', 'attempt-top');
-      const label = node('strong', 'mono', `#${entry.attempt} · PID ${entry.pid}`);
+      const label = node('strong', 'mono', `PID ${entry.pid}`);
+      label.title = `尝试 #${entry.attempt}`;
       const status = node('span', 'status-pill', attemptLabels[entry.status] || entry.status);
       status.dataset.status = attemptVisualStatus(entry);
       top.append(label, status);
-      row.append(top, node('time', 'mono', `${prettyTime(entry.start)} → ${entry.end > 0 ? prettyTime(entry.end) : '—'}`));
+      const timing = node('time', 'mono', entry.end > 0 ? prettyDuration(entry.end - entry.start) : '进行中');
+      timing.title = `${prettyTime(entry.start)} → ${prettyTime(entry.end)}`;
+      row.append(top, timing);
       if (entry.error) row.append(node('p', '', entry.error));
       return row;
     });
@@ -389,11 +420,12 @@ function imageForTile(job, tile) {
   return null;
 }
 
-const placeholder = { queued: '#e4eae2', running: '#f2dca6', failed: '#efc6c9', done: '#c6ddc9' };
+const placeholder = { queued: '#151528b8', running: '#c68b38a8', failed: '#af4557a6', done: '#2a6c57' };
 
 function renderCanvases(job) {
   if (!job?.tiles?.length) return;
-  const signature = JSON.stringify([job.id, mode, selectedTile, assetRevision, job.tiles.map((tile) => tile.status)]);
+  const signature = JSON.stringify([job.id, mode, selectedTile, assetRevision,
+    job.tiles.map((tile) => [tile.status, tile.attempts?.length])]);
   if (signature === canvasSignature && Date.now() < nextTileRetry) return;
   canvasSignature = signature;
   nextTileRetry = Infinity;
@@ -406,7 +438,10 @@ function renderCanvases(job) {
   surface.clearRect(0, 0, committed.width, committed.height);
   lines.clearRect(0, 0, grid.width, grid.height);
   lines.lineWidth = Math.max(1, grid.width / 675);
-  lines.strokeStyle = '#172e2770';
+  lines.strokeStyle = '#e2dbff38';
+  const original = byId('source-preview');
+  const hasOriginal = original.complete && original.naturalWidth > 0;
+  if (mode === 'tiles' && hasOriginal) surface.drawImage(original, 0, 0, committed.width, committed.height);
   for (const tile of job.tiles) {
     const x = Math.round(tile.x * scaleX);
     const y = Math.round(tile.y * scaleY);
@@ -416,13 +451,24 @@ function renderCanvases(job) {
     if (image) {
       surface.drawImage(image, x, y, w, h);
     } else {
-      surface.fillStyle = placeholder[tile.status] || placeholder.queued;
+      surface.fillStyle = mode === 'tiles' ? placeholder[tile.status] || placeholder.queued : '#161629';
       surface.fillRect(x, y, w, h);
     }
     if (mode === 'tiles') lines.strokeRect(x, y, w, h);
   }
   for (const { retryAfter } of tiles.values()) {
     if (retryAfter) nextTileRetry = Math.min(nextTileRetry, retryAfter);
+  }
+  if (mode === 'tiles') {
+    for (const tile of job.tiles) {
+      if (!tile.attempts?.some((attempt) => attempt.status === 'failed') || tile.w < 8 || tile.h < 8) continue;
+      lines.save();
+      lines.strokeStyle = '#c4afff';
+      lines.lineWidth = Math.max(2, grid.width / 400);
+      lines.setLineDash([6, 4]);
+      lines.strokeRect(tile.x * scaleX + 3, tile.y * scaleY + 3, tile.w * scaleX - 6, tile.h * scaleY - 6);
+      lines.restore();
+    }
   }
   const tile = tileForSelection(job);
   if (!tile || mode !== 'tiles') return;
@@ -432,10 +478,10 @@ function renderCanvases(job) {
   const w = Math.max(0, tile.w * scaleX - stroke);
   const h = Math.max(0, tile.h * scaleY - stroke);
   lines.lineWidth = stroke + 2;
-  lines.strokeStyle = '#183028';
+  lines.strokeStyle = '#19172c';
   lines.strokeRect(x, y, w, h);
   lines.lineWidth = stroke;
-  lines.strokeStyle = '#e3ffab';
+  lines.strokeStyle = '#e3d8ff';
   lines.strokeRect(x, y, w, h);
 }
 
@@ -452,7 +498,6 @@ function renderTimeline(job) {
   show('timeline-empty', !visible);
   show('timeline-scroll', visible);
   show('timeline-legend', visible);
-  show('timeline-origin', visible);
   if (!visible) return;
   syncMarkup('timeline', [job.id, attempts], () => {
     const grouped = new Map();
@@ -483,7 +528,6 @@ function renderTimeline(job) {
       return row;
     });
     timeline = { start, positions, labels };
-    write('timeline-origin', `T₀ ${prettyTime(start)}`);
     byId('timeline-content').replaceChildren(axis, ...rows);
   });
   const now = Date.now();
@@ -510,11 +554,21 @@ function updateTimelineSelection() {
 function renderSystem() {
   const workers = state.workers || [];
   const { high = [], normal = [] } = state.queues || {};
-  write('queue-policy', `${state.policy === 'fifo' ? 'FIFO' : '优先级调度'} · 队首 → 队尾`);
+  write('queue-policy', state.policy === 'fifo' ? 'FIFO' : '高优先派发');
+  const highIds = new Set((state.jobs || []).filter((job) => job.priority === 'high').map((job) => job.id));
+  const records = [...history.values()];
+  const highArrival = records.findLast((event) => event.type === 'submitted' && highIds.has(event.job));
+  const nextDispatch = highArrival && records.find((event) => event.seq > highArrival.seq && event.type === 'dispatch');
+  const decision = byId('queue-decision');
+  decision.textContent = nextDispatch
+    ? `高优到达后首次派发：${highIds.has(nextDispatch.job) ? '高优' : '普通'} #${nextDispatch.job} · PID ${nextDispatch.pid}`
+    : highArrival ? '高优已就绪，等待空闲进程' : '';
+  decision.hidden = !decision.textContent;
+  decision.dataset.priority = nextDispatch && highIds.has(nextDispatch.job) ? 'high' : '';
   for (const [priority, queue] of Object.entries({ high, normal })) {
     write(`queue-${priority}-count`, queue.length);
     syncMarkup(`queue-${priority}`, queue, () => {
-      const items = queue.map((entry) => {
+      const items = queue.slice(0, 4).map((entry) => {
         const item = button('mono', `#${entry.job}/${entry.tile}`, () => {
           selectJob(entry.job, entry.tile);
           byId('overview').scrollIntoView();
@@ -522,21 +576,23 @@ function renderSystem() {
         item.title = `任务 #${entry.job} · 图块 #${entry.tile}`;
         return item;
       });
-      byId(`queue-${priority}`).replaceChildren(...(items.length ? items : [node('span', '', '队列为空')]));
+      if (queue.length > items.length) items.push(node('span', 'mono queue-more', `+${queue.length - items.length}`));
+      byId(`queue-${priority}`).replaceChildren(...items);
     });
   }
-  write('worker-count', `${workers.length} 个`);
+  write('worker-count', `${workers.filter((worker) => worker.job > 0).length} / ${workers.length} 运行`);
   syncMarkup('workers', workers, () => {
     const rows = workers.map((worker) => {
       const row = node('div', 'worker-row');
       const info = node('div');
       const pid = Number(worker.pid);
       const occupied = worker.job !== null && worker.job !== undefined && Number(worker.job) > 0;
+      row.dataset.status = occupied ? 'running' : pid > 0 ? 'idle' : 'starting';
       info.append(node('strong', 'mono', pid > 0 ? `PID ${pid}` : `槽位 ${worker.slot}`));
-      info.append(node('small', '', occupied ? `任务 #${worker.job} · 图块 #${worker.tile}` : pid > 0 ? '空闲' : '等待启动'));
+      info.append(node('small', '', occupied ? `任务 #${worker.job} / 块 ${worker.tile}` : pid > 0 ? '空闲' : '等待启动'));
       row.append(info);
       if (pid > 0 && occupied) {
-        const action = button('', '终止', () => openStop(worker));
+        const action = button('worker-stop', '终止', () => openStop(worker));
         action.setAttribute('aria-label', `终止工作进程 PID ${pid}`);
         row.append(action);
       }
@@ -600,10 +656,55 @@ function setFile(file) {
   showError('upload-error', valid ? '' : '请选择 JPEG 或 PNG 图像。');
 }
 
+async function sampleFile(priority) {
+  const high = priority === 'high';
+  const response = await fetch(high ? '/demo-priority.jpg' : '/demo-workbench.jpg');
+  if (!response.ok) throw new Error('样例加载失败');
+  return new File([await response.blob()], high ? '高优样例.jpg' : '湖山样例.jpg', { type: 'image/jpeg' });
+}
+
+async function submitJob(fields, file, session) {
+  const previous = new Set((state?.jobs || []).map(({ id }) => String(id)));
+  fields.set('image', file);
+  const created = await api('/api/jobs', { method: 'POST', body: fields });
+  if (session !== generation) return false;
+  pendingJob = { id: created.id ?? created.job_id ?? created.job?.id, name: file.name, previous };
+  scheduleSync(0);
+  return true;
+}
+
+function refreshDemoButtons() {
+  byId('demo-normal').disabled = Boolean(demoInFlight);
+  const high = byId('demo-high');
+  high.disabled = Boolean(demoInFlight) || !(state?.queues?.normal?.length > 0);
+  high.title = high.disabled && !demoInFlight ? '普通队列中有等待图块时可插入高优样例' : '';
+}
+
+async function runSample(priority) {
+  if (!state || demoInFlight) return;
+  const session = generation;
+  const request = {};
+  demoInFlight = request;
+  refreshDemoButtons();
+  try {
+    const file = await sampleFile(priority);
+    if (session !== generation) return;
+    const fields = new FormData();
+    fields.set('priority', priority);
+    fields.set('op', priority === 'high' ? 'invert' : 'grayscale');
+    if (await submitJob(fields, file, session)) notify(priority === 'high' ? '高优样例已入队' : '普通样例已入队');
+  } catch (error) {
+    if (session === generation) notify(error.message);
+  } finally {
+    if (demoInFlight === request) demoInFlight = null;
+    refreshDemoButtons();
+  }
+}
+
 function openStop(worker) {
   if (state?.user?.role !== 'admin') return;
   stopPid = Number(worker.pid);
-  write('stop-description', `终止 PID ${stopPid}。正在运行的图块将由调度器处理。`);
+  write('stop-description', `PID ${stopPid} 退出后，未提交的图块会重新入队。`);
   showError('stop-error', '');
   byId('stop-dialog').showModal();
 }
@@ -665,7 +766,11 @@ byId('logout').addEventListener('click', async () => {
 });
 
 const originalPreview = byId('source-preview');
-originalPreview.addEventListener('load', () => show('source-error', false));
+originalPreview.addEventListener('load', () => {
+  show('source-error', false);
+  assetRevision += 1;
+  renderCanvases(jobForSelection());
+});
 originalPreview.addEventListener('error', () => show('source-error', mode !== 'tiles'));
 for (const control of all('[data-mode][aria-pressed]')) control.addEventListener('click', () => setMode(control.dataset.mode));
 byId('compare-position').addEventListener('input', (event) => {
@@ -700,6 +805,8 @@ const uploadDialog = byId('upload-dialog');
 const stopDialog = byId('stop-dialog');
 for (const dialog of [uploadDialog, stopDialog]) bindDialog(dialog);
 for (const control of all('[data-open-upload]')) control.addEventListener('click', openUpload);
+byId('demo-normal').addEventListener('click', () => runSample('normal'));
+byId('demo-high').addEventListener('click', () => runSample('high'));
 byId('upload-file').addEventListener('change', (event) => setFile(event.target.files[0] || null));
 const dropArea = byId('drop-area');
 dropArea.addEventListener('dragover', (event) => {
@@ -718,9 +825,7 @@ byId('load-demo').addEventListener('click', async () => {
   const revision = uploadRevision;
   demo.disabled = true;
   try {
-    const response = await fetch('/demo.png');
-    if (!response.ok) throw new Error();
-    const file = new File([await response.blob()], 'tileflow-demo.png', { type: 'image/png' });
+    const file = await sampleFile('normal');
     if (uploadDialog.open && revision === uploadRevision) setFile(file);
   } catch {
     if (uploadDialog.open && revision === uploadRevision) showError('upload-error', '样例加载失败，请选择本地图像。');
@@ -744,14 +849,9 @@ byId('upload-form').addEventListener('submit', async (event) => {
   showError('upload-error', '');
   try {
     const fields = new FormData(form);
-    fields.set('image', file);
-    const previous = new Set((state?.jobs || []).map(({ id }) => String(id)));
-    const created = await api('/api/jobs', { method: 'POST', body: fields });
-    if (session !== generation) return;
-    pendingJob = { id: created.id ?? created.job_id ?? created.job?.id, name: file.name, previous };
+    if (!await submitJob(fields, file, session)) return;
     uploadDialog.close();
-    notify('任务已提交。');
-    scheduleSync(0);
+    notify('任务已提交');
   } catch (error) {
     if (session === generation) showError('upload-error', error.message);
   } finally {
@@ -766,12 +866,14 @@ byId('stop-form').addEventListener('submit', async (event) => {
   const submit = event.currentTarget.querySelector('button[type=submit]');
   const pid = stopPid;
   const session = generation;
+  const after = newestSeq;
   submit.disabled = true;
   stopDialog.dataset.busy = 'true';
   showError('stop-error', '');
   try {
     await api(`/api/workers/${pid}/stop`, { method: 'POST' });
     if (session !== generation) return;
+    watchedStop = { pid, after, until: Date.now() + 15000 };
     stopDialog.close();
     notify(`已请求终止 PID ${pid}。`);
     scheduleSync(0);

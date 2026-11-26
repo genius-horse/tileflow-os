@@ -27,13 +27,13 @@ cmake --build build -j 2
 
 ## 现场演示
 
-1. 用 `--demo-delay-ms 1200` 启动服务。Alice 选择内置 1025×769 样例，提交普通优先级模糊作业。
-2. 管理员看到四个 PID 同时忙碌、普通队列还有积压后，Bob 提交高优先级作业。对照事件编号和时间线，检查下一次派发来自高优队列。
-3. 管理员终止一个带作业编号的忙碌进程。查看该图块的退出、重新入队、再次派发和提交。在 Linux 终端也可以用 `kill -KILL PID` 终止同一服务的某个忙碌 worker。
+1. 以 `--tile-size 128 --demo-delay-ms 3000` 启动演示。管理员登录，点「运行样例」提交普通优先级灰度作业。
+2. 普通队列有等待图块时，直接点「插入高优」。队列卡会显示插入后的首次实际派发，以及接手的 PID。也可在不同浏览器会话分别登录 Alice 和 Bob，通过「新建任务」提交各自的任务。
+3. 点忙碌 PID 旁的「终止」并确认。工作台会在收到退出事件后定位实际受影响的图块，显示入队和重试状态。在 Linux 终端也可以用 `kill -KILL PID` 终止该服务的某个忙碌 worker。
 4. 全部块提交后下载 PNG，用串行计算对照。正常停止服务，按原命令重新启动并重新下载。
 
 ```bash
-./build/tileflow --serial blur web/demo.png /tmp/tileflow-reference.png
+./build/tileflow --serial grayscale web/demo-workbench.jpg /tmp/tileflow-reference.png
 ./build/tileflow --compare /tmp/tileflow-reference.png /path/to/download.png
 ```
 
@@ -73,4 +73,6 @@ python3 scripts/acceptance.py --binary build/tileflow --benchmark --repeats 3 --
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib) 提供 HTTP 传输和 multipart 解析，MIT。固定版本及许可证位于 `third_party/`。
 - [nlohmann/json](https://github.com/nlohmann/json) 提供 JSON 读写，MIT。固定版本及许可证位于 `third_party/`。
 - [OpenCV](https://github.com/opencv/opencv) 提供图像运算，按实际链接的版本适用其 [许可证](https://opencv.org/license/)。
-- [xv6 磁盘结构](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/fs.h) 与 [块分配实现](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/fs.c) 用作文件系统结构参考。[Ray 任务状态](https://docs.ray.io/en/latest/ray-observability/reference/doc/ray.util.state.common.TaskState.html) 用作区分任务与执行尝试的参考。[vis-timeline 分组示例](https://visjs.github.io/vis-timeline/examples/timeline/groups/groups.html) 用作进程时间线交互参考。
+- [xv6 磁盘结构](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/fs.h) 与 [块分配实现](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/fs.c) 用作文件系统结构参考。[Ray 任务状态](https://docs.ray.io/en/latest/ray-observability/reference/doc/ray.util.state.common.TaskState.html) 用作区分任务与执行尝试的参考。
+- 进程泳道、任务色块、队列计数和渐进拼图的布局参考 [Perfetto](https://perfetto.dev/docs/visualization/perfetto-ui#track-event-selections)、[Dask Dashboard](https://docs.dask.org/en/stable/dashboard.html#task-stream)、[bull-board](https://github.com/felixmosh/bull-board) 和 [Leaflet rastercoords](https://commenthol.github.io/leaflet-rastercoords/)。工作台使用原生 CSS、Canvas 和 JavaScript。
+- 登录封面和两种演示样例取自同一张内置 ImageGen 图。普通图位于 `web/demo-workbench.jpg`，高优图位于 `web/demo-priority.jpg`。画面提示词描述了蓝调时刻的雪峰、松林与静水，铜橙和淡紫晚霞倒映在湖面，并要求画面有均匀分布的纹理。
