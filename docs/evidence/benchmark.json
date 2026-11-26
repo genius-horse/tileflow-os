@@ -1,0 +1,81 @@
+{
+  "normal_dimensions": [
+    3073,
+    2049
+  ],
+  "high_dimensions": [
+    129,
+    97
+  ],
+  "workers": 4,
+  "tile_size": 256,
+  "demo_delay_ms": 0,
+  "trials": {
+    "priority": [
+      {
+        "trial": 1,
+        "high_dispatch_wait_ms": 5,
+        "high_turnaround_ms": 8,
+        "normal_turnaround_ms": 368,
+        "batch_turnaround_ms": 368,
+        "normal_tiles_waiting_before_high": 117
+      },
+      {
+        "trial": 2,
+        "high_dispatch_wait_ms": 2,
+        "high_turnaround_ms": 6,
+        "normal_turnaround_ms": 385,
+        "batch_turnaround_ms": 385,
+        "normal_tiles_waiting_before_high": 113
+      },
+      {
+        "trial": 3,
+        "high_dispatch_wait_ms": 4,
+        "high_turnaround_ms": 5,
+        "normal_turnaround_ms": 391,
+        "batch_turnaround_ms": 391,
+        "normal_tiles_waiting_before_high": 117
+      }
+    ],
+    "fifo": [
+      {
+        "trial": 1,
+        "high_dispatch_wait_ms": 148,
+        "high_turnaround_ms": 366,
+        "normal_turnaround_ms": 372,
+        "batch_turnaround_ms": 375,
+        "normal_tiles_waiting_before_high": 111
+      },
+      {
+        "trial": 2,
+        "high_dispatch_wait_ms": 148,
+        "high_turnaround_ms": 372,
+        "normal_turnaround_ms": 382,
+        "batch_turnaround_ms": 385,
+        "normal_tiles_waiting_before_high": 109
+      },
+      {
+        "trial": 3,
+        "high_dispatch_wait_ms": 162,
+        "high_turnaround_ms": 402,
+        "normal_turnaround_ms": 401,
+        "batch_turnaround_ms": 406,
+        "normal_tiles_waiting_before_high": 117
+      }
+    ]
+  },
+  "medians": {
+    "priority": {
+      "high_dispatch_wait_ms": 4,
+      "high_turnaround_ms": 6,
+      "normal_turnaround_ms": 385,
+      "batch_turnaround_ms": 385
+    },
+    "fifo": {
+      "high_dispatch_wait_ms": 148,
+      "high_turnaround_ms": 372,
+      "normal_turnaround_ms": 382,
+      "batch_turnaround_ms": 385
+    }
+  }
+}

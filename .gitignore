@@ -1,0 +1,8 @@
+/build*/
+*.img
+*.img.*
+__pycache__/
+.env
+*.cookie
+/acceptance.json
+/benchmark.json

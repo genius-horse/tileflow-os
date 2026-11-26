@@ -1,0 +1,1384 @@
+{
+  "busy_workers": [
+    {
+      "job": 1,
+      "pid": 232653,
+      "slot": 1,
+      "tile": 0,
+      "attempt": 1,
+      "start": 1795690874123
+    },
+    {
+      "job": 1,
+      "pid": 232654,
+      "slot": 2,
+      "tile": 1,
+      "attempt": 2,
+      "start": 1795690874124
+    },
+    {
+      "job": 1,
+      "pid": 232655,
+      "slot": 3,
+      "tile": 2,
+      "attempt": 3,
+      "start": 1795690874124
+    },
+    {
+      "job": 1,
+      "pid": 232656,
+      "slot": 4,
+      "tile": 3,
+      "attempt": 4,
+      "start": 1795690874124
+    }
+  ],
+  "overlap_workers": [
+    {
+      "job": 1,
+      "pid": 232653,
+      "slot": 1,
+      "tile": 4,
+      "attempt": 6,
+      "start": 1795690874730
+    },
+    {
+      "job": 3,
+      "pid": 232654,
+      "slot": 2,
+      "tile": 0,
+      "attempt": 5,
+      "start": 1795690874726
+    },
+    {
+      "job": 1,
+      "pid": 232655,
+      "slot": 3,
+      "tile": 5,
+      "attempt": 7,
+      "start": 1795690874730
+    },
+    {
+      "job": 1,
+      "pid": 232656,
+      "slot": 4,
+      "tile": 6,
+      "attempt": 8,
+      "start": 1795690874730
+    }
+  ],
+  "normal_queue_before_high": [
+    {
+      "job": 1,
+      "tile": 4
+    },
+    {
+      "job": 1,
+      "tile": 5
+    },
+    {
+      "job": 1,
+      "tile": 6
+    },
+    {
+      "job": 1,
+      "tile": 7
+    },
+    {
+      "job": 1,
+      "tile": 8
+    },
+    {
+      "job": 1,
+      "tile": 9
+    },
+    {
+      "job": 1,
+      "tile": 10
+    },
+    {
+      "job": 1,
+      "tile": 11
+    },
+    {
+      "job": 1,
+      "tile": 12
+    },
+    {
+      "job": 1,
+      "tile": 13
+    },
+    {
+      "job": 1,
+      "tile": 14
+    },
+    {
+      "job": 1,
+      "tile": 15
+    },
+    {
+      "job": 1,
+      "tile": 16
+    },
+    {
+      "job": 1,
+      "tile": 17
+    },
+    {
+      "job": 1,
+      "tile": 18
+    },
+    {
+      "job": 1,
+      "tile": 19
+    },
+    {
+      "job": 2,
+      "tile": 0
+    },
+    {
+      "job": 2,
+      "tile": 1
+    },
+    {
+      "job": 2,
+      "tile": 2
+    },
+    {
+      "job": 2,
+      "tile": 3
+    },
+    {
+      "job": 2,
+      "tile": 4
+    },
+    {
+      "job": 2,
+      "tile": 5
+    },
+    {
+      "job": 2,
+      "tile": 6
+    },
+    {
+      "job": 2,
+      "tile": 7
+    },
+    {
+      "job": 2,
+      "tile": 8
+    },
+    {
+      "job": 2,
+      "tile": 9
+    },
+    {
+      "job": 2,
+      "tile": 10
+    },
+    {
+      "job": 2,
+      "tile": 11
+    },
+    {
+      "job": 2,
+      "tile": 12
+    },
+    {
+      "job": 2,
+      "tile": 13
+    },
+    {
+      "job": 2,
+      "tile": 14
+    },
+    {
+      "job": 2,
+      "tile": 15
+    },
+    {
+      "job": 2,
+      "tile": 16
+    },
+    {
+      "job": 2,
+      "tile": 17
+    },
+    {
+      "job": 2,
+      "tile": 18
+    },
+    {
+      "job": 2,
+      "tile": 19
+    }
+  ],
+  "high_submitted": {
+    "attempt": 0,
+    "job": 3,
+    "message": "高优先级作业已入队",
+    "pid": 0,
+    "seq": 11,
+    "tile": 0,
+    "time": 1795690874154,
+    "type": "submitted"
+  },
+  "dispatch_after_high": {
+    "attempt": 5,
+    "job": 3,
+    "message": "已派发图块",
+    "pid": 232654,
+    "seq": 13,
+    "tile": 0,
+    "time": 1795690874726,
+    "type": "dispatch"
+  },
+  "recovery": {
+    "admin_stop": {
+      "exit": {
+        "attempt": 6,
+        "job": 1,
+        "message": "管理员已终止进程 (SIGKILL)",
+        "pid": 232653,
+        "seq": 20,
+        "tile": 4,
+        "time": 1795690874747,
+        "type": "worker_exit"
+      },
+      "requeue": {
+        "attempt": 6,
+        "job": 1,
+        "message": "图块按原优先级重新入队",
+        "pid": 232653,
+        "seq": 21,
+        "tile": 4,
+        "time": 1795690874747,
+        "type": "requeue"
+      },
+      "retry": {
+        "attempt": 42,
+        "job": 1,
+        "message": "已派发图块",
+        "pid": 232722,
+        "seq": 92,
+        "tile": 4,
+        "time": 1795690879622,
+        "type": "dispatch"
+      },
+      "commit": {
+        "attempt": 42,
+        "job": 1,
+        "message": "图块已写入磁盘镜像",
+        "pid": 232722,
+        "seq": 98,
+        "tile": 4,
+        "time": 1795690880223,
+        "type": "commit"
+      },
+      "attempts": [
+        {
+          "attempt": 6,
+          "end": 1795690874747,
+          "error": "管理员已终止进程 (SIGKILL)",
+          "pid": 232653,
+          "start": 1795690874730,
+          "status": "failed"
+        },
+        {
+          "attempt": 42,
+          "end": 1795690880223,
+          "error": "",
+          "pid": 232722,
+          "start": 1795690879622,
+          "status": "done"
+        }
+      ]
+    },
+    "external_sigkill": {
+      "exit": {
+        "attempt": 9,
+        "job": 1,
+        "message": "进程退出，信号 9",
+        "pid": 232720,
+        "seq": 24,
+        "tile": 7,
+        "time": 1795690874790,
+        "type": "worker_exit"
+      },
+      "requeue": {
+        "attempt": 9,
+        "job": 1,
+        "message": "图块按原优先级重新入队",
+        "pid": 232720,
+        "seq": 25,
+        "tile": 7,
+        "time": 1795690874790,
+        "type": "requeue"
+      },
+      "retry": {
+        "attempt": 43,
+        "job": 1,
+        "message": "已派发图块",
+        "pid": 232654,
+        "seq": 94,
+        "tile": 7,
+        "time": 1795690880139,
+        "type": "dispatch"
+      },
+      "commit": {
+        "attempt": 43,
+        "job": 1,
+        "message": "图块已写入磁盘镜像",
+        "pid": 232654,
+        "seq": 99,
+        "tile": 7,
+        "time": 1795690880740,
+        "type": "commit"
+      },
+      "attempts": [
+        {
+          "attempt": 9,
+          "end": 1795690874790,
+          "error": "进程退出，信号 9",
+          "pid": 232720,
+          "start": 1795690874747,
+          "status": "failed"
+        },
+        {
+          "attempt": 43,
+          "end": 1795690880739,
+          "error": "",
+          "pid": 232654,
+          "start": 1795690880139,
+          "status": "done"
+        }
+      ]
+    }
+  },
+  "results": {
+    "1": {
+      "owner": "alice",
+      "operation": "blur",
+      "tiles": 20,
+      "sha256": "edf91d2bc0a85df0854c6ad33f5578cc481c220e2e22eac92b2aae189afabede",
+      "comparison": "Dimensions 1025x769, different pixels 0, max channel delta 0"
+    },
+    "2": {
+      "owner": "bob",
+      "operation": "invert",
+      "tiles": 20,
+      "sha256": "989b7b561023449643f56849ab31e4bb914d4853f9ca6fdf0ac0b18ecbf9b8d1",
+      "comparison": "Dimensions 1025x769, different pixels 0, max channel delta 0"
+    },
+    "3": {
+      "owner": "bob",
+      "operation": "grayscale",
+      "tiles": 1,
+      "sha256": "6607d7acb90f8d8ac2412cce772ccaf84ecc84c9890f86255e2dd451edb0b2e3",
+      "comparison": "Dimensions 129x97, different pixels 0, max channel delta 0"
+    }
+  },
+  "restart_verified": true,
+  "events": [
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232653,
+      "seq": 1,
+      "tile": 0,
+      "time": 1795690874092,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232654,
+      "seq": 2,
+      "tile": 0,
+      "time": 1795690874093,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232655,
+      "seq": 3,
+      "tile": 0,
+      "time": 1795690874093,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232656,
+      "seq": 4,
+      "tile": 0,
+      "time": 1795690874093,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 0,
+      "job": 1,
+      "message": "普通作业已入队",
+      "pid": 0,
+      "seq": 5,
+      "tile": 0,
+      "time": 1795690874114,
+      "type": "submitted"
+    },
+    {
+      "attempt": 1,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232653,
+      "seq": 6,
+      "tile": 0,
+      "time": 1795690874124,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 2,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 7,
+      "tile": 1,
+      "time": 1795690874124,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 3,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 8,
+      "tile": 2,
+      "time": 1795690874124,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 4,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 9,
+      "tile": 3,
+      "time": 1795690874124,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 0,
+      "job": 2,
+      "message": "普通作业已入队",
+      "pid": 0,
+      "seq": 10,
+      "tile": 0,
+      "time": 1795690874153,
+      "type": "submitted"
+    },
+    {
+      "attempt": 0,
+      "job": 3,
+      "message": "高优先级作业已入队",
+      "pid": 0,
+      "seq": 11,
+      "tile": 0,
+      "time": 1795690874154,
+      "type": "submitted"
+    },
+    {
+      "attempt": 2,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 12,
+      "tile": 1,
+      "time": 1795690874726,
+      "type": "commit"
+    },
+    {
+      "attempt": 5,
+      "job": 3,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 13,
+      "tile": 0,
+      "time": 1795690874726,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 1,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232653,
+      "seq": 14,
+      "tile": 0,
+      "time": 1795690874727,
+      "type": "commit"
+    },
+    {
+      "attempt": 3,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 15,
+      "tile": 2,
+      "time": 1795690874729,
+      "type": "commit"
+    },
+    {
+      "attempt": 4,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 16,
+      "tile": 3,
+      "time": 1795690874730,
+      "type": "commit"
+    },
+    {
+      "attempt": 6,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232653,
+      "seq": 17,
+      "tile": 4,
+      "time": 1795690874730,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 7,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 18,
+      "tile": 5,
+      "time": 1795690874730,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 8,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 19,
+      "tile": 6,
+      "time": 1795690874730,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 6,
+      "job": 1,
+      "message": "管理员已终止进程 (SIGKILL)",
+      "pid": 232653,
+      "seq": 20,
+      "tile": 4,
+      "time": 1795690874747,
+      "type": "worker_exit"
+    },
+    {
+      "attempt": 6,
+      "job": 1,
+      "message": "图块按原优先级重新入队",
+      "pid": 232653,
+      "seq": 21,
+      "tile": 4,
+      "time": 1795690874747,
+      "type": "requeue"
+    },
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232720,
+      "seq": 22,
+      "tile": 0,
+      "time": 1795690874747,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 9,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232720,
+      "seq": 23,
+      "tile": 7,
+      "time": 1795690874747,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 9,
+      "job": 1,
+      "message": "进程退出，信号 9",
+      "pid": 232720,
+      "seq": 24,
+      "tile": 7,
+      "time": 1795690874790,
+      "type": "worker_exit"
+    },
+    {
+      "attempt": 9,
+      "job": 1,
+      "message": "图块按原优先级重新入队",
+      "pid": 232720,
+      "seq": 25,
+      "tile": 7,
+      "time": 1795690874790,
+      "type": "requeue"
+    },
+    {
+      "attempt": 0,
+      "job": 0,
+      "message": "工作进程已启动",
+      "pid": 232722,
+      "seq": 26,
+      "tile": 0,
+      "time": 1795690874790,
+      "type": "worker_spawn"
+    },
+    {
+      "attempt": 10,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 27,
+      "tile": 8,
+      "time": 1795690874790,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 5,
+      "job": 3,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 28,
+      "tile": 0,
+      "time": 1795690875327,
+      "type": "commit"
+    },
+    {
+      "attempt": 0,
+      "job": 3,
+      "message": "所有图块已提交，最终图像可下载",
+      "pid": 0,
+      "seq": 29,
+      "tile": 0,
+      "time": 1795690875327,
+      "type": "job_done"
+    },
+    {
+      "attempt": 11,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 30,
+      "tile": 9,
+      "time": 1795690875327,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 7,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 31,
+      "tile": 5,
+      "time": 1795690875332,
+      "type": "commit"
+    },
+    {
+      "attempt": 8,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 32,
+      "tile": 6,
+      "time": 1795690875333,
+      "type": "commit"
+    },
+    {
+      "attempt": 12,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 33,
+      "tile": 10,
+      "time": 1795690875333,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 13,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 34,
+      "tile": 11,
+      "time": 1795690875333,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 10,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 35,
+      "tile": 8,
+      "time": 1795690875412,
+      "type": "commit"
+    },
+    {
+      "attempt": 14,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 36,
+      "tile": 12,
+      "time": 1795690875412,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 11,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 37,
+      "tile": 9,
+      "time": 1795690875928,
+      "type": "commit"
+    },
+    {
+      "attempt": 15,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 38,
+      "tile": 13,
+      "time": 1795690875928,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 12,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 39,
+      "tile": 10,
+      "time": 1795690875935,
+      "type": "commit"
+    },
+    {
+      "attempt": 16,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 40,
+      "tile": 14,
+      "time": 1795690875935,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 13,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 41,
+      "tile": 11,
+      "time": 1795690875937,
+      "type": "commit"
+    },
+    {
+      "attempt": 17,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 42,
+      "tile": 15,
+      "time": 1795690875937,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 14,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 43,
+      "tile": 12,
+      "time": 1795690876014,
+      "type": "commit"
+    },
+    {
+      "attempt": 18,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 44,
+      "tile": 16,
+      "time": 1795690876014,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 15,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 45,
+      "tile": 13,
+      "time": 1795690876530,
+      "type": "commit"
+    },
+    {
+      "attempt": 19,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 46,
+      "tile": 17,
+      "time": 1795690876530,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 16,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 47,
+      "tile": 14,
+      "time": 1795690876536,
+      "type": "commit"
+    },
+    {
+      "attempt": 20,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 48,
+      "tile": 18,
+      "time": 1795690876536,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 17,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 49,
+      "tile": 15,
+      "time": 1795690876537,
+      "type": "commit"
+    },
+    {
+      "attempt": 21,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 50,
+      "tile": 19,
+      "time": 1795690876537,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 18,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 51,
+      "tile": 16,
+      "time": 1795690876614,
+      "type": "commit"
+    },
+    {
+      "attempt": 22,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 52,
+      "tile": 0,
+      "time": 1795690876614,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 19,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 53,
+      "tile": 17,
+      "time": 1795690877131,
+      "type": "commit"
+    },
+    {
+      "attempt": 23,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 54,
+      "tile": 1,
+      "time": 1795690877131,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 20,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 55,
+      "tile": 18,
+      "time": 1795690877136,
+      "type": "commit"
+    },
+    {
+      "attempt": 24,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 56,
+      "tile": 2,
+      "time": 1795690877136,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 21,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 57,
+      "tile": 19,
+      "time": 1795690877137,
+      "type": "commit"
+    },
+    {
+      "attempt": 25,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 58,
+      "tile": 3,
+      "time": 1795690877137,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 22,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 59,
+      "tile": 0,
+      "time": 1795690877216,
+      "type": "commit"
+    },
+    {
+      "attempt": 26,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 60,
+      "tile": 4,
+      "time": 1795690877216,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 23,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 61,
+      "tile": 1,
+      "time": 1795690877732,
+      "type": "commit"
+    },
+    {
+      "attempt": 27,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 62,
+      "tile": 5,
+      "time": 1795690877733,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 24,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 63,
+      "tile": 2,
+      "time": 1795690877738,
+      "type": "commit"
+    },
+    {
+      "attempt": 28,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 64,
+      "tile": 6,
+      "time": 1795690877738,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 25,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 65,
+      "tile": 3,
+      "time": 1795690877739,
+      "type": "commit"
+    },
+    {
+      "attempt": 29,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 66,
+      "tile": 7,
+      "time": 1795690877739,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 26,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 67,
+      "tile": 4,
+      "time": 1795690877816,
+      "type": "commit"
+    },
+    {
+      "attempt": 30,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 68,
+      "tile": 8,
+      "time": 1795690877817,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 27,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 69,
+      "tile": 5,
+      "time": 1795690878335,
+      "type": "commit"
+    },
+    {
+      "attempt": 31,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 70,
+      "tile": 9,
+      "time": 1795690878335,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 28,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 71,
+      "tile": 6,
+      "time": 1795690878340,
+      "type": "commit"
+    },
+    {
+      "attempt": 32,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 72,
+      "tile": 10,
+      "time": 1795690878340,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 29,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 73,
+      "tile": 7,
+      "time": 1795690878343,
+      "type": "commit"
+    },
+    {
+      "attempt": 33,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 74,
+      "tile": 11,
+      "time": 1795690878343,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 30,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 75,
+      "tile": 8,
+      "time": 1795690878419,
+      "type": "commit"
+    },
+    {
+      "attempt": 34,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 76,
+      "tile": 12,
+      "time": 1795690878419,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 31,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 77,
+      "tile": 9,
+      "time": 1795690878935,
+      "type": "commit"
+    },
+    {
+      "attempt": 35,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 78,
+      "tile": 13,
+      "time": 1795690878936,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 32,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 79,
+      "tile": 10,
+      "time": 1795690878943,
+      "type": "commit"
+    },
+    {
+      "attempt": 36,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 80,
+      "tile": 14,
+      "time": 1795690878943,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 33,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 81,
+      "tile": 11,
+      "time": 1795690878945,
+      "type": "commit"
+    },
+    {
+      "attempt": 37,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 82,
+      "tile": 15,
+      "time": 1795690878945,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 34,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 83,
+      "tile": 12,
+      "time": 1795690879022,
+      "type": "commit"
+    },
+    {
+      "attempt": 38,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 84,
+      "tile": 16,
+      "time": 1795690879022,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 35,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 85,
+      "tile": 13,
+      "time": 1795690879538,
+      "type": "commit"
+    },
+    {
+      "attempt": 39,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 86,
+      "tile": 17,
+      "time": 1795690879538,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 36,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 87,
+      "tile": 14,
+      "time": 1795690879543,
+      "type": "commit"
+    },
+    {
+      "attempt": 40,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232655,
+      "seq": 88,
+      "tile": 18,
+      "time": 1795690879543,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 37,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 89,
+      "tile": 15,
+      "time": 1795690879545,
+      "type": "commit"
+    },
+    {
+      "attempt": 41,
+      "job": 2,
+      "message": "已派发图块",
+      "pid": 232656,
+      "seq": 90,
+      "tile": 19,
+      "time": 1795690879545,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 38,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 91,
+      "tile": 16,
+      "time": 1795690879622,
+      "type": "commit"
+    },
+    {
+      "attempt": 42,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232722,
+      "seq": 92,
+      "tile": 4,
+      "time": 1795690879622,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 39,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 93,
+      "tile": 17,
+      "time": 1795690880138,
+      "type": "commit"
+    },
+    {
+      "attempt": 43,
+      "job": 1,
+      "message": "已派发图块",
+      "pid": 232654,
+      "seq": 94,
+      "tile": 7,
+      "time": 1795690880139,
+      "type": "dispatch"
+    },
+    {
+      "attempt": 40,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232655,
+      "seq": 95,
+      "tile": 18,
+      "time": 1795690880144,
+      "type": "commit"
+    },
+    {
+      "attempt": 41,
+      "job": 2,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232656,
+      "seq": 96,
+      "tile": 19,
+      "time": 1795690880146,
+      "type": "commit"
+    },
+    {
+      "attempt": 0,
+      "job": 2,
+      "message": "所有图块已提交，最终图像可下载",
+      "pid": 0,
+      "seq": 97,
+      "tile": 0,
+      "time": 1795690880178,
+      "type": "job_done"
+    },
+    {
+      "attempt": 42,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232722,
+      "seq": 98,
+      "tile": 4,
+      "time": 1795690880223,
+      "type": "commit"
+    },
+    {
+      "attempt": 43,
+      "job": 1,
+      "message": "图块已写入磁盘镜像",
+      "pid": 232654,
+      "seq": 99,
+      "tile": 7,
+      "time": 1795690880740,
+      "type": "commit"
+    },
+    {
+      "attempt": 0,
+      "job": 1,
+      "message": "所有图块已提交，最终图像可下载",
+      "pid": 0,
+      "seq": 100,
+      "tile": 0,
+      "time": 1795690880759,
+      "type": "job_done"
+    }
+  ]
+}

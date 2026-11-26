@@ -1,0 +1,8 @@
+{
+  "disk_mib": 4,
+  "first_job": "downloaded before and after restart; identical bytes",
+  "second_job": "reported failed; result returned HTTP 404 before and after restart",
+  "reason": "图块无法提交: disk data region is full: No space left on device",
+  "committed_tiles": 2,
+  "total_tiles": 6
+}

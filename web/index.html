@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142421">
+  <title>TileFlow · 图像处理工作台</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main id="login" class="login-screen">
+    <section class="login-brand" aria-labelledby="login-heading">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>TileFlow<small>OS LAB</small></span></div>
+      <div class="login-intro">
+        <p class="login-kicker">操作系统实验</p>
+        <h1 id="login-heading">图像处理<br>与进程调度</h1>
+        <p>提交一张图像，观察图块如何在队列、工作进程和磁盘之间流转。</p>
+      </div>
+      <div class="login-grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="login-footer">TILEFLOW <span>操作系统课程设计</span></p>
+    </section>
+    <section class="login-body">
+      <div class="login-form-wrap">
+        <h2>登录工作台</h2>
+        <p>使用实验账户进入图像处理工作台。</p>
+        <form id="login-form" class="stack-form">
+          <label>用户名<input name="username" autocomplete="username" required autofocus></label>
+          <label>密码<input name="password" type="password" autocomplete="current-password" required></label>
+          <p id="login-error" class="form-error" role="alert" hidden></p>
+          <button class="button primary" type="submit">登录 <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="demo-access">
+          <span>填入演示账户</span>
+          <div class="demo-buttons">
+            <button type="button" data-account="alice">用户 Alice</button>
+            <button type="button" data-account="bob">用户 Bob</button>
+            <button type="button" data-account="admin">管理员</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="workspace" class="workspace" hidden>
+    <aside class="rail">
+      <a class="brand" href="#overview" aria-label="TileFlow 工作台"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>TileFlow<small>OS LAB</small></span></a>
+      <nav class="rail-nav" aria-label="工作台导航">
+        <a href="#overview"><span aria-hidden="true">▦</span> 图像工作台</a>
+        <a href="#schedule"><span aria-hidden="true">≋</span> 进程时间线</a>
+        <a id="admin-nav" href="#system" hidden><span aria-hidden="true">◈</span> 系统监控</a>
+      </nav>
+      <div class="rail-jobs">
+        <div class="rail-heading"><h2 id="job-list-heading">任务列表</h2><button class="rail-add" type="button" data-open-upload aria-label="新建任务">+</button></div>
+        <div class="job-list" id="job-list" aria-labelledby="job-list-heading"></div>
+      </div>
+      <div class="rail-account">
+        <div class="account-avatar" id="account-avatar" aria-hidden="true"></div>
+        <div class="account-text"><strong id="account-name"></strong><span id="account-role"></span></div>
+        <button type="button" id="logout" title="退出登录" aria-label="退出登录">↗</button>
+      </div>
+    </aside>
+
+    <div class="main-shell">
+      <header class="topbar">
+        <span>操作系统实验 <i aria-hidden="true">/</i> 实时工作台</span>
+        <div id="connection" class="connection" data-connection="pending"><span class="connection-dot" aria-hidden="true"></span><span id="connection-label">正在连接</span></div>
+      </header>
+      <main class="main-content" id="overview">
+        <div class="page-heading">
+          <div><h1>图像工作台</h1><p>提交图像任务，逐块观察处理结果与进程调度。</p></div>
+          <button type="button" data-open-upload class="button primary"><span aria-hidden="true">+</span> 新建任务</button>
+        </div>
+
+        <div id="empty-view" class="empty-view panel">
+          <div class="empty-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <h2>还没有图像任务</h2>
+          <p>上传 JPEG 或 PNG 图像，开始观察图块处理。</p>
+          <button class="button secondary" type="button" data-open-upload>新建第一个任务 <span aria-hidden="true">→</span></button>
+        </div>
+
+        <div id="job-view" class="job-view" hidden>
+          <section class="panel preview-panel" aria-labelledby="preview-heading">
+            <div class="panel-heading preview-heading">
+              <div class="truncate"><h2 id="preview-heading">图像预览</h2><p id="job-name"></p></div>
+              <a id="download-result" class="button secondary download" download hidden><span aria-hidden="true">↓</span> 下载 PNG</a>
+            </div>
+            <div class="image-toolbar">
+              <div class="view-tabs" role="group" aria-label="预览模式">
+                <button type="button" data-mode="tiles" aria-pressed="true">图块</button>
+                <button type="button" data-mode="source" aria-pressed="false">原图</button>
+                <button type="button" data-mode="compare" aria-pressed="false">对比</button>
+              </div>
+              <span id="image-size" class="mono"></span>
+            </div>
+            <div class="image-stage" id="image-stage" data-mode="tiles">
+              <div class="image-frame" id="image-frame">
+                <img id="source-preview" alt="任务原图" hidden>
+                <canvas id="tile-preview" aria-label="已提交的图块图像"></canvas>
+                <canvas id="grid-preview" tabindex="0" role="group" aria-label="图块网格，使用方向键或下方的列表选择图块"></canvas>
+                <div id="compare-divider" class="compare-divider" aria-hidden="true" hidden><span>↔</span></div>
+              </div>
+              <p id="source-error" class="source-error" hidden>原图预览加载失败。</p>
+            </div>
+            <div id="compare-controls" class="compare-controls" hidden>
+              <span>处理后</span><input id="compare-position" type="range" min="0" max="100" value="50" aria-label="处理前后对比分界位置"><span>原图</span>
+            </div>
+            <div class="legend" id="tile-legend" aria-label="图块颜色图例"><span><i data-status="queued"></i>就绪</span><span><i data-status="running"></i>运行</span><span><i data-status="done"></i>已提交</span><span><i data-status="failed"></i>失败</span></div>
+          </section>
+
+          <div class="details-stack">
+            <section class="panel detail-panel" aria-labelledby="job-heading">
+              <div class="panel-heading"><h2 id="job-heading">任务详情</h2><span id="job-status" class="status-pill"></span></div>
+              <dl class="job-facts">
+                <div><dt>任务编号</dt><dd id="job-id" class="mono"></dd></div>
+                <div><dt>图像操作</dt><dd id="job-operation"></dd></div>
+                <div><dt>优先级</dt><dd id="job-priority"></dd></div>
+                <div><dt>提交时间</dt><dd id="job-submitted" class="mono"></dd></div>
+                <div id="job-owner-row" hidden><dt>提交用户</dt><dd id="job-owner"></dd></div>
+              </dl>
+              <div class="progress-area">
+                <div><span>已提交图块</span><strong class="mono" id="job-progress-label"></strong></div>
+                <progress id="job-progress" value="0" max="1" aria-label="已提交图块"></progress>
+              </div>
+              <p id="job-error" class="inline-error" hidden></p>
+            </section>
+
+            <section class="panel detail-panel tile-panel" aria-labelledby="tile-heading">
+              <div class="panel-heading"><h2 id="tile-heading">图块详情</h2><span id="tile-status" class="status-pill" hidden></span></div>
+              <label class="tile-picker"><span>选择图块</span><select id="tile-select" aria-label="选择图块"></select></label>
+              <p id="tile-location" class="tile-location mono"></p>
+              <h3>尝试记录</h3>
+              <p class="muted tile-empty" id="attempt-empty">此图块尚未分配给工作进程。</p>
+              <div class="attempt-list" id="attempt-list"></div>
+            </section>
+          </div>
+        </div>
+
+        <section class="panel timeline-panel" id="schedule" aria-labelledby="timeline-heading">
+          <div class="panel-heading"><div><h2 id="timeline-heading">进程时间线</h2><p>按工作进程 PID 展示当前任务的图块尝试。</p></div><span id="timeline-origin" class="timeline-origin mono" hidden></span></div>
+          <p class="panel-empty" id="timeline-empty">等待工作进程接收图块。</p>
+          <div class="timeline-scroll" id="timeline-scroll" hidden><div class="timeline-content" id="timeline-content"></div></div>
+          <div class="legend timeline-legend" id="timeline-legend" hidden><span><i data-status="running"></i>运行</span><span><i data-status="done"></i>完成</span><span><i data-status="failed"></i>失败或回收</span></div>
+        </section>
+
+        <section id="system" class="system-section" aria-labelledby="system-heading" hidden>
+          <div class="section-heading"><h2 id="system-heading">系统监控</h2><p>管理员可查看全局队列、工作进程和磁盘空间。</p></div>
+          <div class="system-grid">
+            <section class="panel system-panel" aria-labelledby="queue-heading">
+              <div class="panel-heading"><h3 id="queue-heading">双级就绪队列</h3><span class="section-caption" id="queue-policy"></span></div>
+              <div class="queue-lane"><div><span><i class="queue-dot high"></i>高优先级</span><b id="queue-high-count" class="mono"></b></div><div class="queue-items" id="queue-high"></div></div>
+              <div class="queue-lane"><div><span><i class="queue-dot normal"></i>普通优先级</span><b id="queue-normal-count" class="mono"></b></div><div class="queue-items" id="queue-normal"></div></div>
+            </section>
+            <section class="panel system-panel" aria-labelledby="workers-heading">
+              <div class="panel-heading"><h3 id="workers-heading">工作进程</h3><span id="worker-count" class="section-caption mono"></span></div>
+              <div class="worker-list" id="worker-list"></div>
+            </section>
+            <section class="panel system-panel" aria-labelledby="disk-heading">
+              <div class="panel-heading"><h3 id="disk-heading">磁盘状态</h3></div>
+              <div class="disk-list" id="disk-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel events-panel" id="events" aria-labelledby="events-heading">
+          <div class="panel-heading"><div><h2 id="events-heading">调度事件</h2><p>最新事件显示在顶部。</p></div><span class="section-caption mono" id="event-count"></span></div>
+          <div class="events-feed" id="events-feed"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="upload-dialog" aria-labelledby="upload-title">
+    <form id="upload-form" class="dialog-body stack-form">
+      <div class="dialog-heading"><div><h2 id="upload-title">新建图像任务</h2><p>选择图像、处理方式和优先级。</p></div><button type="button" class="icon-button" data-close-dialog aria-label="关闭">×</button></div>
+      <div class="drop-area" id="drop-area">
+        <span class="drop-icon" aria-hidden="true">↑</span>
+        <strong id="file-label">拖放 JPEG 或 PNG 图像</strong>
+        <label class="button secondary file-trigger" for="upload-file">选择图像</label>
+        <input id="upload-file" class="visually-hidden-file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+      </div>
+      <button type="button" id="load-demo" class="text-button">载入样例</button>
+      <div class="field-grid">
+        <label>图像操作<select name="op"><option value="grayscale">灰度</option><option value="invert">反色</option><option value="blur">模糊</option></select></label>
+        <label>优先级<select name="priority"><option value="normal">普通</option><option value="high">高</option></select></label>
+      </div>
+      <p id="upload-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close-dialog>取消</button><button type="submit" class="button primary" id="submit-job">提交任务 <span aria-hidden="true">→</span></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="stop-dialog" aria-labelledby="stop-title">
+    <form id="stop-form" class="dialog-body stack-form">
+      <div class="dialog-heading"><div><h2 id="stop-title">终止工作进程</h2><p id="stop-description"></p></div><button type="button" class="icon-button" data-close-dialog aria-label="关闭">×</button></div>
+      <p id="stop-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close-dialog>取消</button><button type="submit" class="button danger">确认终止</button></div>
+    </form>
+  </dialog>
+
+  <p class="toast" id="toast" role="status" hidden></p>
+</body>
+</html>
